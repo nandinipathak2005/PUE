@@ -4,86 +4,99 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const PUECalculator = () => {
-  const [workload, setWorkload] = useState("");
-  const [powerUsage, setPowerUsage] = useState("");
-  const [pue, setPUE] = useState(1.5); // Default value for PUE
-  const [results, setResults] = useState(null);
+const SustainabilityCalculator = () => {
+  const [materials, setMaterials] = useState("Recycled Polypropylene Panels");
+  const [infrastructure, setInfrastructure] = useState("Smart Grid Integration");
+  const [energy, setEnergy] = useState("100% Renewable (Solar/Wind)");
+  const [cooling, setCooling] = useState("Liquid Cooling");
+  const [score, setScore] = useState(0);
+  const [co2Savings, setCo2Savings] = useState(0);
+
+  const sustainabilityScores = {
+    "Natural Fiber Insulation": 50,
+    "Recycled Polypropylene Panels": 70,
+    "Upcycled E-Waste Materials": 90,
+    "Standard Concrete & Steel": 30,
+    "Smart Grid Integration": 20,
+    "Green Roofs": 20,
+    "None": 0,
+    "100% Renewable (Solar/Wind)": 50,
+    "Hybrid (Renewable + Grid)": 30,
+    "Fossil Fuels (Coal/Natural Gas)": 10,
+    "Liquid Cooling": 40,
+    "AI-Optimized Cooling": 30,
+    "Traditional Air Cooling": 10,
+  };
 
   const calculateImpact = () => {
-    if (!workload || !powerUsage || !pue || pue <= 0 || workload < 0 || powerUsage < 0) {
-      alert("Please enter valid positive values.");
-      return;
-    }
-
-    // Industry-standard PUE values
-    const traditionalPUE = 2.0; // Traditional data centers
-    const greenPUE = 1.2; // Green data centers
-    const nonConventionalPUE = 1.5; // Mixed-energy approach
-
-    const traditionalImpact = workload * powerUsage * traditionalPUE;
-    const greenImpact = workload * powerUsage * greenPUE;
-    const nonConventionalImpact = workload * powerUsage * nonConventionalPUE;
-
-    setResults({
-      traditional: traditionalImpact.toFixed(2),
-      green: greenImpact.toFixed(2),
-      nonConventional: nonConventionalImpact.toFixed(2),
-    });
+    const totalScore = sustainabilityScores[materials] +
+      sustainabilityScores[infrastructure] +
+      sustainabilityScores[energy] +
+      sustainabilityScores[cooling];
+    setScore(totalScore);
+    setCo2Savings(totalScore * 1.2);
   };
 
   return (
-    <div style={{ backgroundColor: "black", color: "white", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-      <h1 style={{ fontSize: "2rem", fontWeight: "bold", textAlign: "center" }}>
-        ⚡ Data Center PUE Calculator
-      </h1>
-
-      <div style={{ backgroundColor: "#222", padding: "20px", borderRadius: "10px", boxShadow: "0 0 10px #39FF14", width: "90%", maxWidth: "400px" }}>
-        <label style={{ display: "block", marginBottom: "10px" }}>Workload (kW):</label>
-        <input type="number" value={workload} min="0" onChange={(e) => setWorkload(Math.max(0, e.target.value))}
-          style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #39FF14", backgroundColor: "#111", color: "white" }} />
-        
-        <label style={{ display: "block", marginBottom: "10px" }}>Power Usage (kWh):</label>
-        <input type="number" value={powerUsage} min="0" onChange={(e) => setPowerUsage(Math.max(0, e.target.value))}
-          style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #39FF14", backgroundColor: "#111", color: "white" }} />
-        
-        <button onClick={calculateImpact} style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "none", backgroundColor: "#39FF14", color: "black", fontWeight: "bold", cursor: "pointer" }}>
-          Calculate Impact
-        </button>
-
-        {results && (
-          <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#111", borderRadius: "5px", color: "#39FF14", textAlign: "center" }}>
-            <h3 style={{ fontWeight: "bold", marginBottom: "10px" }}>🌍 Energy Consumption</h3>
-            <p>🔥 Traditional (PUE 2.0): <span style={{ color: "red" }}>{results.traditional}</span> kWh</p>
-            <p>🌿 Green (PUE 1.2): <span style={{ color: "lightgreen" }}>{results.green}</span> kWh</p>
-            <p>📀 Non-Conventional (PUE 1.5): <span style={{ color: "yellow" }}>{results.nonConventional}</span> kWh</p>
-          </div>
-        )}
+    <div style={{ backgroundColor: "#111", color: "white", minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "Arial, sans-serif" }}>
+      <h1 style={{ fontSize: "2rem", fontWeight: "bold", textAlign: "center", color: "#39FF14" }}>🌱 Data Center Sustainability Planner</h1>
+      <div style={{ backgroundColor: "#222", padding: "20px", borderRadius: "10px", width: "90%", maxWidth: "500px", boxShadow: "0px 0px 10px #39FF14" }}>
+        <label>Building Materials:</label>
+        <select value={materials} onChange={(e) => setMaterials(e.target.value)} className="dropdown">
+          {Object.keys(sustainabilityScores).slice(0, 4).map(option => <option key={option}>{option}</option>)}
+        </select>
+        <label>Infrastructure Efficiency:</label>
+        <select value={infrastructure} onChange={(e) => setInfrastructure(e.target.value)} className="dropdown">
+          <option>Smart Grid Integration</option>
+          <option>Green Roofs</option>
+          <option>None</option>
+        </select>
+        <label>Energy Source:</label>
+        <select value={energy} onChange={(e) => setEnergy(e.target.value)} className="dropdown">
+          <option>100% Renewable (Solar/Wind)</option>
+          <option>Hybrid (Renewable + Grid)</option>
+          <option>Fossil Fuels (Coal/Natural Gas)</option>
+        </select>
+        <label>Cooling Technology:</label>
+        <select value={cooling} onChange={(e) => setCooling(e.target.value)} className="dropdown">
+          <option>Liquid Cooling</option>
+          <option>AI-Optimized Cooling</option>
+          <option>Traditional Air Cooling</option>
+        </select>
+        <button onClick={calculateImpact} style={{ width: "100%", padding: "10px", marginTop: "10px", borderRadius: "5px", backgroundColor: "#39FF14", color: "black", fontWeight: "bold" }}>Calculate Sustainability</button>
       </div>
-      
-      {results && (
-        <div style={{ width: "80%", maxWidth: "600px", marginTop: "20px" }}>
-          <Bar 
-            data={{
-              labels: ["Traditional", "Green", "Non-Conventional"],
-              datasets: [{
-                label: "Energy Consumption (kWh)",
-                data: [results.traditional, results.green, results.nonConventional],
-                backgroundColor: ["red", "lightgreen", "yellow"],
-              }],
-            }}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: { display: false },
-                title: { display: true, text: "Data Center Energy Consumption" },
-              },
-            }}
-          />
+      {score > 0 && (
+        <div style={{ marginTop: "20px", padding: "10px", backgroundColor: "#111", borderRadius: "5px", textAlign: "center", boxShadow: "0px 0px 5px #39FF14" }}>
+          <h3>🌍 Sustainability Score: {score} / 100</h3>
+          <p>💚 CO₂ Savings: {co2Savings.toFixed(2)} kg</p>
         </div>
       )}
+      {score > 0 && (
+        <div style={{ width: "80%", maxWidth: "600px", marginTop: "20px" }}>
+          <Bar data={{ labels: ["Your Sustainability Score"], datasets: [{ label: "Score", data: [score], backgroundColor: "lightgreen" }] }} options={{ responsive: true, plugins: { legend: { display: false }, title: { display: true, text: "Sustainability Score" } } }} />
+        </div>
+      )}
+      <style>
+        {`
+          .dropdown {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            background-color: #111;
+            color: white;
+            border: 1px solid #39FF14;
+            outline: none;
+            font-size: 1rem;
+            box-shadow: 0px 0px 5px #39FF14;
+          }
+          .dropdown:focus {
+            box-shadow: 0px 0px 10px #39FF14;
+          }
+        `}
+      </style>
     </div>
   );
 };
 
-export default PUECalculator; 
+export default SustainabilityCalculator;
